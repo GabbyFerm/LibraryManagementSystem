@@ -1,0 +1,91 @@
+{
+  "books": [
+    {
+      "Title": "Salems Lot",
+      "Author": {
+        "Name": "Stephen King",
+        "ID": 1,
+        "Country": "United States"
+      },
+      "ID": 1,
+      "Genre": "Thriller",
+      "PublishedYear": 2011,
+      "ISBN": 1111,
+      "Reviews": [ 4, 5 ]
+    },
+    {
+      "Title": "Deeply Odd",
+      "Author": {
+        "Name": "Dean Koontz",
+        "ID": 2,
+        "Country": "United States"
+      },
+      "ID": 2,
+      "Genre": "Thriller",
+      "PublishedYear": 2014,
+      "ISBN": 2222,
+      "Reviews": [ 3, 5 ]
+    },
+    {
+      "Title": "IT",
+      "Author": {
+        "Name": "Stephen King",
+        "ID": 1,
+        "Country": "United States"
+      },
+      "ID": 3,
+      "Genre": "Thriller",
+      "PublishedYear": 2017,
+      "ISBN": 3333,
+      "Reviews": [ 4, 3 ]
+    },
+    {
+      "Title": "Dwarves",
+      "Author": {
+        "Name": "Markus Heitz",
+        "ID": 3,
+        "Country": "Germany"
+      },
+      "ID": 4,
+      "Genre": "Fantasy",
+      "PublishedYear": 2009,
+      "ISBN": 4444,
+      "Reviews": [ 4, 5 ]
+    },
+    {
+      "Title": "The Alchemist",
+      "Author": {
+        "Name": "Paulo Coelho",
+        "ID": 4,
+        "Country": "Brazil"
+      },
+      "ID": 5,
+      "Genre": "Poetry",
+      "PublishedYear": 1995,
+      "ISBN": 555,
+      "Reviews": [ 4, 5 ]
+    }
+  ],
+  "authors": [
+    {
+      "Name": "Stephen King",
+      "ID": 1,
+      "Country": "United States"
+    },
+    {
+      "Name": "Dean Koontz",
+      "ID": 2,
+      "Country": "United States"
+    },
+    {
+      "Name": "Markus Heitz",
+      "ID": 3,
+      "Country": "Germany"
+    },
+    {
+      "Name": "Paulo Coelho",
+      "ID": 4,
+      "Country": "Brazil"
+    }
+  ]
+}
