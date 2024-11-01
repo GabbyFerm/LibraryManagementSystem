@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LibraryManagementSystem
+namespace LibraryManagementSystem.Classes
 {
     public class BookManager
     {
@@ -36,14 +36,14 @@ namespace LibraryManagementSystem
             {
                 Console.WriteLine("Author not found. You will now be prompted to add this author.");
 
-                AddNewAuthor(allAuthors); 
+                AddNewAuthor(allAuthors);
 
                 authorOfThisBook = allAuthors.FirstOrDefault(author => author.Name.Equals(addNewBookAuthorName, StringComparison.OrdinalIgnoreCase));
 
                 if (authorOfThisBook == null)
                 {
                     Console.WriteLine("Failed to retrieve the author after adding. Please try again.\n");
-                    return; 
+                    return;
                 }
             }
 
@@ -95,7 +95,7 @@ namespace LibraryManagementSystem
             Console.WriteLine($"Book {addNewBookTitle} has been added successfully.");
         }
 
-        public void AddNewAuthor(List<Author> allAuthors) 
+        public void AddNewAuthor(List<Author> allAuthors)
         {
             string addNewAuthorName = "";
             bool authorExists = true;
@@ -111,7 +111,7 @@ namespace LibraryManagementSystem
                 }
                 else
                 {
-                    authorExists = false; 
+                    authorExists = false;
                 }
             }
 
@@ -128,7 +128,7 @@ namespace LibraryManagementSystem
                 }
                 else
                 {
-                    idExists = false; 
+                    idExists = false;
                 }
             }
 
@@ -138,7 +138,7 @@ namespace LibraryManagementSystem
             allAuthors.Add(new Author(addNewAuthorName, addNewAuthorId, addNewAuthorCountry));
             Console.WriteLine($"Author {addNewAuthorName} has been added successfully.");
         }
-        public void UpdateBookInfo(List<Book> allBooks, List<Author> allAuthors) 
+        public void UpdateBookInfo(List<Book> allBooks, List<Author> allAuthors)
         {
             Console.WriteLine("What details do you want to update? Choose an option below:");
             Console.WriteLine("1 - Update genre");
@@ -165,7 +165,7 @@ namespace LibraryManagementSystem
 
             var book = allBooks.FirstOrDefault(book => book.Title.Equals(bookName, StringComparison.OrdinalIgnoreCase));
 
-            if (book != null) 
+            if (book != null)
             {
                 Console.WriteLine($"Current genre: {book.Genre}");
                 Console.WriteLine("Enter the new genre:");
@@ -173,7 +173,7 @@ namespace LibraryManagementSystem
                 book.Genre = newGenre;
                 Console.WriteLine("Genre updated successfully.\n");
             }
-            else 
+            else
             {
                 Console.WriteLine("Could not find a book with that title.\n");
             }
@@ -239,7 +239,7 @@ namespace LibraryManagementSystem
                     break;
             }
         }
-        public void RemoveBook(List<Book> allBooks) 
+        public void RemoveBook(List<Book> allBooks)
         {
             Console.WriteLine("Type the title of the book you want to remove: ");
             string bookTitleToRemove = Console.ReadLine()!;
@@ -256,7 +256,7 @@ namespace LibraryManagementSystem
                 Console.WriteLine($"No book found with the title {bookTitleToRemove} was found.");
             }
         }
-        public void RemoveAuthor(List<Author> allAuthors) 
+        public void RemoveAuthor(List<Author> allAuthors)
         {
             Console.WriteLine("Type the name of the author you want to remove: ");
             string authorNameToRemove = Console.ReadLine()!;
@@ -268,12 +268,12 @@ namespace LibraryManagementSystem
                 allAuthors.Remove(authorToRemove);
                 Console.WriteLine($"Author {authorToRemove.Name} has been removed successfully.");
             }
-            else 
+            else
             {
                 Console.WriteLine($"No author with the name {authorNameToRemove} was found.");
             }
         }
-        public void ListAllBooksAndAuthors(List<Book> allBooks, List<Author> allAuthors) 
+        public void ListAllBooksAndAuthors(List<Book> allBooks, List<Author> allAuthors)
         {
             Console.WriteLine("What info do you want to list?");
             Console.WriteLine("1 - All books");
@@ -313,10 +313,10 @@ namespace LibraryManagementSystem
 
                         var booksByAuthor = allBooks.Where(book => book.Author.ID == author.ID).ToList();
 
-                        if (booksByAuthor.Count > 0) 
+                        if (booksByAuthor.Count > 0)
                         {
                             Console.WriteLine("Books:");
-                            foreach (var book in booksByAuthor) 
+                            foreach (var book in booksByAuthor)
                             {
                                 double averageReview = CalculateAverageReview(book);
 
@@ -338,9 +338,9 @@ namespace LibraryManagementSystem
                 default:
                     Console.WriteLine("Invalid choice. Please enter either 1 or 2.");
                     break;
-            }         
+            }
         }
-        public void SearchAndFilterBooks(List<Book> allBooks, List<Author> allAuthors) 
+        public void SearchAndFilterBooks(List<Book> allBooks, List<Author> allAuthors)
         {
             Console.WriteLine("Search & filter books. Choose an option below: ");
             Console.WriteLine("1 - Filter books by genre");
@@ -356,10 +356,10 @@ namespace LibraryManagementSystem
 
                     var filteredBooksByGenre = allBooks.Where(book => book.Genre.Equals(listByGenre, StringComparison.OrdinalIgnoreCase)).ToList();
 
-                    if (filteredBooksByGenre.Any()) 
+                    if (filteredBooksByGenre.Any())
                     {
                         Console.WriteLine($"Books in {listByGenre}:");
-                        foreach (var book in filteredBooksByGenre) 
+                        foreach (var book in filteredBooksByGenre)
                         {
                             Console.WriteLine($"Title: {book.Title} | Author: {book.Author.Name} | Genre: {book.Genre}");
                         }
@@ -375,7 +375,7 @@ namespace LibraryManagementSystem
                     int listByAverageNumber = 0;
                     bool validAverage = false;
 
-                    while (!validAverage) 
+                    while (!validAverage)
                     {
                         listByAverageNumber = GetValidatedIntegerInput("Please enter a number between 1 and 5:");
 
@@ -383,7 +383,7 @@ namespace LibraryManagementSystem
                         {
                             validAverage = true;
                         }
-                        else 
+                        else
                         {
                             Console.WriteLine("Error, the average number must be between 1 and 5. Please try again.");
                         }
@@ -391,7 +391,7 @@ namespace LibraryManagementSystem
 
                     var booksAboveAverage = allBooks.Where(book => book.Reviews.Count > 0 && book.Reviews.Average() > listByAverageNumber).ToList();
 
-                    if (booksAboveAverage.Any()) 
+                    if (booksAboveAverage.Any())
                     {
                         Console.WriteLine($"Books with an average review above {listByAverageNumber}:");
                         foreach (var book in booksAboveAverage)
@@ -406,7 +406,7 @@ namespace LibraryManagementSystem
 
                     break;
                 case "3":
-                    var sortBooksByPublishedYear = allBooks.OrderBy(book  => book.PublishedYear).ToList();
+                    var sortBooksByPublishedYear = allBooks.OrderBy(book => book.PublishedYear).ToList();
                     Console.WriteLine("Books sorted by published year:");
                     foreach (var book in sortBooksByPublishedYear)
                     {
@@ -422,7 +422,7 @@ namespace LibraryManagementSystem
         {
             if (book.Reviews.Count == 0)
             {
-                return 0; 
+                return 0;
             }
             return book.Reviews.Average();
         }

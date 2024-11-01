@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem
+namespace LibraryManagementSystem.Classes
 {
     public class Book
     {
