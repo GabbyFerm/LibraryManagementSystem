@@ -183,7 +183,7 @@ namespace LibraryManagementSystem.Classes
             Console.WriteLine("Enter the name of the book you want to add a review to:");
             string bookName = Console.ReadLine()!;
 
-            var book = allBooks.FirstOrDefault(b => b.Title.Equals(bookName, StringComparison.OrdinalIgnoreCase));
+            var book = allBooks.FirstOrDefault(book => book.Title.Equals(bookName, StringComparison.OrdinalIgnoreCase));
             if (book != null)
             {
                 Console.WriteLine("Current reviews: " + string.Join(", ", book.Reviews));
