@@ -84,19 +84,12 @@ namespace LibraryManagementSystem.Classes
             if (authorOfThisBook == null)
             {
                 Console.WriteLine("Author not found. You will now be prompted to add this author.");
-                AddNewAuthor(allAuthors);
-                authorOfThisBook = allAuthors.ListAll().FirstOrDefault(author => author.Name.Equals(addNewBookAuthorName, StringComparison.OrdinalIgnoreCase));
-
-                if (authorOfThisBook == null)
-                {
-                    Console.WriteLine("Failed to retrieve the author after adding. Please try again.\n");
-                    return null!;
-                }
+                return AddNewAuthor(allAuthors);
             }
 
             return authorOfThisBook;
         }
-        public void AddNewAuthor(LibraryGenericFunctions<Author> allAuthors)
+        public Author AddNewAuthor(LibraryGenericFunctions<Author> allAuthors)
         {
             string addNewAuthorName = "";
             bool authorExists = true;
@@ -136,8 +129,10 @@ namespace LibraryManagementSystem.Classes
             Console.WriteLine("Type the country of the author: ");
             string addNewAuthorCountry = Console.ReadLine()!;
 
-            allAuthors.Add(new Author(addNewAuthorName, addNewAuthorId, addNewAuthorCountry));
+            Author authorToAdd = new Author(addNewAuthorName, addNewAuthorId, addNewAuthorCountry);
+            allAuthors.Add(authorToAdd);
             Console.WriteLine($"Author {addNewAuthorName} has been added successfully.");
+            return authorToAdd;
         }
         public void UpdateBookInfo(LibraryGenericFunctions<Book> allBooks)
         {

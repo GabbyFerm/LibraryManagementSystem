@@ -16,17 +16,14 @@ namespace LibraryManagementSystem.Classes
         _libraryItem = listItems;
     }
 
-        //List all books or authors
         public List<T> ListAll()
         {
             return _libraryItem.ToList();
         }
-        //Add book, author, review
         public void Add(T item)
         {
             _libraryItem.Add(item);
         }
-        //Update bookinfo/author
         public void Update(T item)
         {
             var index = _libraryItem.FindIndex(item => (item as IIdentifiable)!.Id == (item as IIdentifiable)!.Id);
@@ -39,7 +36,6 @@ namespace LibraryManagementSystem.Classes
         {
             return _libraryItem.FirstOrDefault(item => item.Id == id)!;
         }
-        //Remove book, author
         public void Remove(int id)
         {
             var item = Fetch(id);
