@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibraryManagementSystem.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Classes
 {
-    public class Book
+    public class Book : IIdentifiable
     {
         public string Title { get; set; }
         public Author Author { get; set; }
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Genre { get; set; }
         public int PublishedYear { get; set; }
         public int ISBN { get; set; }
@@ -20,7 +21,7 @@ namespace LibraryManagementSystem.Classes
         {
             Title = title;
             Author = author;
-            ID = id;
+            Id = id;
             Genre = genre;
             PublishedYear = publishedYear;
             ISBN = isbn;

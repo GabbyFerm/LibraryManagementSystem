@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using LibraryManagementSystem.Classes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using LibraryManagementSystem.Classes;
+using System.Text.Json;
 
 namespace LibraryManagementSystem
 {
@@ -9,15 +8,13 @@ namespace LibraryManagementSystem
         static void Main(string[] args)
         {
             string dataJSONfilePath = "LibraryData.json";
-            string allDataAsJSONtype = File.ReadAllText(dataJSONfilePath);
+            HandleLibraryDB handleLibraryDB = JsonSerializer.Deserialize<HandleLibraryDB>(File.ReadAllText(dataJSONfilePath))!;
 
-            HandleLibraryDB handleLibraryDB = JsonSerializer.Deserialize<HandleLibraryDB>(allDataAsJSONtype)!;
-
-            List<Book> allBooks = handleLibraryDB.AllBooksFromDB;
-            List<Author> allAuthors = handleLibraryDB.AllAuthorsFromDB;
             BookManager bookManager = new BookManager();
+            var allAuthors = new LibraryGenericFunctions<Author>(handleLibraryDB.AllAuthorsFromDB);
+            var allBooks = new LibraryGenericFunctions<Book>(handleLibraryDB.AllBooksFromDB);
 
-            if (handleLibraryDB != null && handleLibraryDB.AllBooksFromDB != null)
+            if (handleLibraryDB != null)
             {
                 Console.WriteLine("Welcome to the library. Choose an option below: \n");
 
@@ -30,28 +27,28 @@ namespace LibraryManagementSystem
                     switch (menuOptionChoosed)
                     {
                         case "1":
-                            bookManager.AddNewBook(handleLibraryDB.AllBooksFromDB, handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.AddNewBook(allBooks, allAuthors);
                             break;
                         case "2":
-                            bookManager.AddNewAuthor(handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.AddNewAuthor(allAuthors);
                             break;
                         case "3":
-                            bookManager.UpdateBookInfo(handleLibraryDB.AllBooksFromDB, handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.UpdateBookInfo(allBooks);
                             break;
                         case "4":
-                            bookManager.UpdateAuthorInfo(handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.UpdateAuthorInfo(allAuthors);
                             break;
                         case "5":
-                            bookManager.RemoveBook(handleLibraryDB.AllBooksFromDB);
+                            bookManager.RemoveBook(allBooks);
                             break;
                         case "6":
-                            bookManager.RemoveAuthor(handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.RemoveAuthor(allAuthors);
                             break;
                         case "7":
-                            bookManager.ListAllBooksAndAuthors(handleLibraryDB.AllBooksFromDB, handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.ListAllBooksAndAuthors(allBooks, allAuthors);
                             break;
                         case "8":
-                            bookManager.SearchAndFilterBooks(handleLibraryDB.AllBooksFromDB, handleLibraryDB.AllAuthorsFromDB);
+                            bookManager.SearchAndFilterBooks(allBooks, allAuthors);
                             break;
                         case "9":
                             string updatedLibraryDB = JsonSerializer.Serialize(handleLibraryDB, new JsonSerializerOptions { WriteIndented = true });
