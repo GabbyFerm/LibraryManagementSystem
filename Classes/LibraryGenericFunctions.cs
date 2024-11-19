@@ -1,20 +1,15 @@
 ﻿using LibraryManagementSystem.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Classes
 {
-  public class LibraryGenericFunctions<T> where T : class, IIdentifiable
-  {
-    private List<T> _libraryItem;
-
-    public LibraryGenericFunctions(List<T> listItems)
+    public class LibraryGenericFunctions<T> where T : class, IIdentifiable
     {
-        _libraryItem = listItems;
-    }
+        private List<T> _libraryItem;
+
+        public LibraryGenericFunctions(List<T> listItems)
+        {
+            _libraryItem = listItems;
+        }
 
         public List<T> ListAll()
         {

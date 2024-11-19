@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Spectre.Console;
 
 namespace LibraryManagementSystem.Classes
 {
@@ -6,73 +7,80 @@ namespace LibraryManagementSystem.Classes
     {
         public void AddNewBook(LibraryGenericFunctions<Book> allBooks, LibraryGenericFunctions<Author> allAuthors)
         {
-            Console.WriteLine("Type the title of the book you want to add: ");
-            string addNewBookTitle = Console.ReadLine()!;
-
-            bool ifBookTitleExists = true;
-            while (ifBookTitleExists) 
+            try
             {
-                if (allBooks.ListAll().Any(book => book.Title.Equals(addNewBookTitle, StringComparison.OrdinalIgnoreCase)))
-                {
-                    Console.WriteLine($"A book with the title {addNewBookTitle} already exists. Please try a different title.");
+                Console.WriteLine("Type the title of the book you want to add: ");
+                string addNewBookTitle = Console.ReadLine()!;
 
-                    Console.WriteLine("Type a different title for the book: ");
-                    addNewBookTitle = Console.ReadLine()!;
-                }
-                else
+                bool ifBookTitleExists = true;
+                while (ifBookTitleExists)
                 {
-                    ifBookTitleExists = false;
+                    if (allBooks.ListAll().Any(book => book.Title.Equals(addNewBookTitle, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Console.WriteLine($"A book with the title {addNewBookTitle} already exists. Please try a different title.");
+
+                        Console.WriteLine("Type a different title for the book: ");
+                        addNewBookTitle = Console.ReadLine()!;
+                    }
+                    else
+                    {
+                        ifBookTitleExists = false;
+                    }
                 }
+
+                Author? authorOfThisBook = GetOrAddAuthor(allAuthors);
+
+                int addNewbookId = 0;
+                bool bookIdExists = true;
+
+                while (bookIdExists)
+                {
+                    addNewbookId = GetValidatedIntegerInput("Type the Id of the book you want to add:");
+
+                    if (allBooks.ListAll().Any(book => book.Id == addNewbookId))
+                    {
+                        Console.WriteLine($"Abook with the Id {addNewbookId} already exists. Please try a different Id.");
+                    }
+                    else
+                    {
+                        bookIdExists = false;
+                    }
+                }
+
+                string addNewBookGenre = "";
+                bool validGenreInput = false;
+
+                while (!validGenreInput)
+                {
+                    Console.WriteLine("Type the genre of the book you want to add: ");
+                    addNewBookGenre = Console.ReadLine()!;
+
+                    if (addNewBookGenre.All(characters => char.IsLetter(characters) || char.IsWhiteSpace(characters)))
+                    {
+                        validGenreInput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error, the genre can only contain letters. Please try again.");
+                    }
+                }
+
+                int addNewBookPublishedYear = GetValidatedIntegerInput("Type the published year of the book you want to add:");
+
+                int addNewBookIsbn = GetValidatedIntegerInput("Type the ISBN number of the book you want to add:");
+
+                int addNewBookReview = GetValidatedIntegerInput("Add a review of the book (1-5):");
+
+                List<int> bookReviews = new List<int>();
+                bookReviews.Add(addNewBookReview);
+
+                allBooks.Add(new Book(addNewBookTitle, authorOfThisBook, addNewbookId, addNewBookGenre, addNewBookPublishedYear, addNewBookIsbn, bookReviews));
+                Console.WriteLine($"Book {addNewBookTitle} has been added successfully.");
             }
-
-            Author? authorOfThisBook = GetOrAddAuthor(allAuthors);
-
-            int addNewbookId = 0;
-            bool bookIdExists = true;
-
-            while (bookIdExists)
+            catch (Exception ex)
             {
-                addNewbookId = GetValidatedIntegerInput("Type the Id of the book you want to add:");
-
-                if (allBooks.ListAll().Any(book => book.Id == addNewbookId))
-                {
-                    Console.WriteLine($"Abook with the Id {addNewbookId} already exists. Please try a different Id.");
-                }
-                else
-                {
-                    bookIdExists = false;
-                }
+                Console.WriteLine("An error occured while adding book " + ex.Message);
             }
-
-            string addNewBookGenre = "";
-            bool validGenreInput = false;
-
-            while (!validGenreInput)
-            {
-                Console.WriteLine("Type the genre of the book you want to add: ");
-                addNewBookGenre = Console.ReadLine()!;
-
-                if (addNewBookGenre.All(characters => char.IsLetter(characters) || char.IsWhiteSpace(characters)))
-                {
-                    validGenreInput = true;
-                }
-                else
-                {
-                    Console.WriteLine("Error, the genre can only contain letters. Please try again.");
-                }
-            }
-
-            int addNewBookPublishedYear = GetValidatedIntegerInput("Type the published year of the book you want to add:");
-
-            int addNewBookIsbn = GetValidatedIntegerInput("Type the ISBN number of the book you want to add:");
-
-            int addNewBookReview = GetValidatedIntegerInput("Add a review of the book (1-5):");
-
-            List<int> bookReviews = new List<int>();
-            bookReviews.Add(addNewBookReview);
-
-            allBooks.Add(new Book(addNewBookTitle, authorOfThisBook, addNewbookId, addNewBookGenre, addNewBookPublishedYear, addNewBookIsbn, bookReviews));
-            Console.WriteLine($"Book {addNewBookTitle} has been added successfully.");
         }
         private Author GetOrAddAuthor(LibraryGenericFunctions<Author> allAuthors)
         {
@@ -134,9 +142,9 @@ namespace LibraryManagementSystem.Classes
             Console.WriteLine($"Author {addNewAuthorName} has been added successfully.");
             return authorToAdd;
         }
-        public void UpdateBookInfo(LibraryGenericFunctions<Book> allBooks)
+        public void UpdateBookGenre(LibraryGenericFunctions<Book> allBooks)
         {
-            Console.WriteLine("Enter the title of the book you want to update:");
+            Console.WriteLine("Enter the title of the book:");
             string bookTitle = Console.ReadLine()!;
 
             var book = allBooks.ListAll().FirstOrDefault(b => b.Title.Equals(bookTitle, StringComparison.OrdinalIgnoreCase));
@@ -145,41 +153,40 @@ namespace LibraryManagementSystem.Classes
                 Console.WriteLine("Book not found in the list.\n");
                 return;
             }
-            Console.WriteLine("What details do you want to update? Choose an option below:");
-            Console.WriteLine("1 - Update genre");
-            Console.WriteLine("2 - Add review");
-            string updateBookInfoChoice = Console.ReadLine()!;
 
-            switch (updateBookInfoChoice)
+            Console.WriteLine("Enter the new genre:");
+            book.Genre = Console.ReadLine()!;
+            Console.WriteLine("Genre has been updated.");
+            allBooks.Update(book);
+        }
+        public void AddReviewToBook(LibraryGenericFunctions<Book> allBooks)
+        {
+            Console.WriteLine("Enter the title of the book:");
+            string bookTitle = Console.ReadLine()!;
+
+            var book = allBooks.ListAll().FirstOrDefault(b => b.Title.Equals(bookTitle, StringComparison.OrdinalIgnoreCase));
+            if (book == null)
             {
-                case "1":
-                    Console.WriteLine("Enter the new genre:");
-                    book.Genre = Console.ReadLine()!;
-                    Console.WriteLine("Genre has been updated.");
-                    break;
-                case "2":
-                    Console.WriteLine("Enter the review (1-5):");
+                Console.WriteLine("Book not found in the list.\n");
+                return;
+            }
+            Console.WriteLine("Enter the review (1-5):");
 
-                    int review;
-                    if (int.TryParse(Console.ReadLine(), out review) && review >= 1 && review <= 5)
-                    {
-                        book.Reviews.Add(review);
-                        Console.WriteLine("Review has been added.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid review. Please enter a number between 1 and 5.");
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please enter either 1 or 2.");
-                    return;
+            int review;
+            if (int.TryParse(Console.ReadLine(), out review) && review >= 1 && review <= 5)
+            {
+                book.Reviews.Add(review);
+                Console.WriteLine("Review has been added.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid review. Please enter a number between 1 and 5.");
             }
             allBooks.Update(book);
         }
-        public void UpdateAuthorInfo(LibraryGenericFunctions<Author> allAuthors)
+        public void UpdateAuthorName(LibraryGenericFunctions<Author> allAuthors)
         {
-            Console.WriteLine("Enter the name of the author you want to update:");
+            Console.WriteLine("Enter the name of the author:");
             string authorName = Console.ReadLine()!;
 
             var author = allAuthors.ListAll().FirstOrDefault(a => a.Name.Equals(authorName, StringComparison.OrdinalIgnoreCase));
@@ -190,28 +197,29 @@ namespace LibraryManagementSystem.Classes
                 return;
             }
 
-            Console.WriteLine("What details do you want to update? Choose an option below:");
-            Console.WriteLine("1 - Update name");
-            Console.WriteLine("2 - Update country");
-            string updateAuthorInfoChoice = Console.ReadLine()!;
-            switch (updateAuthorInfoChoice)
+            Console.WriteLine("Enter the new name for the author:");
+            string newAuthorName = Console.ReadLine()!;
+            author.Name = newAuthorName;
+            Console.WriteLine($"Author's name has been updated to {newAuthorName}.");
+            allAuthors.Update(author);
+        }
+        public void UpdateAuthorCountry(LibraryGenericFunctions<Author> allAuthors)
+        {
+            Console.WriteLine("Enter the name of the author:");
+            string authorName = Console.ReadLine()!;
+
+            var author = allAuthors.ListAll().FirstOrDefault(a => a.Name.Equals(authorName, StringComparison.OrdinalIgnoreCase));
+
+            if (author == null)
             {
-                case "1":
-                    Console.WriteLine("Enter the new name for the author:");
-                    string newAuthorName = Console.ReadLine()!;
-                    author.Name = newAuthorName;
-                    Console.WriteLine($"Author's name has been updated to {newAuthorName}.");
-                    break;
-                case "2":
-                    Console.WriteLine("Enter the new country for the author:");
-                    string newCountry = Console.ReadLine()!;
-                    author.Country = newCountry;
-                    Console.WriteLine($"Author's country has been updated to {newCountry}.");
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please enter either 1 or 2.");
-                    break;
+                Console.WriteLine("Author not found in the list.\n");
+                return;
             }
+
+            Console.WriteLine("Enter the new country for the author:");
+            string newCountry = Console.ReadLine()!;
+            author.Country = newCountry;
+            Console.WriteLine($"Author's country has been updated to {newCountry}.");
             allAuthors.Update(author);
         }
         public void RemoveBook(LibraryGenericFunctions<Book> allBooks)
@@ -228,155 +236,203 @@ namespace LibraryManagementSystem.Classes
 
             allAuthors.RemoveByCondition(author => author.Name.Equals(authorNameToRemove, StringComparison.OrdinalIgnoreCase));
         }
-        public void ListAllBooksAndAuthors(LibraryGenericFunctions<Book> allBooks, LibraryGenericFunctions<Author> allAuthors)
+        public void ListAllBooks(LibraryGenericFunctions<Book> allBooks)
         {
-            Console.WriteLine("What info do you want to list?");
-            Console.WriteLine("1 - All books");
-            Console.WriteLine("2 - All authors");
+            var sortedBooks = allBooks.ListAll().OrderBy(book => book.Title);
+            var table = new Table();
+            table.AddColumn("[bold springgreen4]Title[/]");
+            table.AddColumn("[bold springgreen4]Author[/]");
+            table.AddColumn("[bold springgreen4]Author Country[/]");
+            table.AddColumn("[bold springgreen4]Id[/]");
+            table.AddColumn("[bold springgreen4]Genre[/]");
+            table.AddColumn("[bold springgreen4]Published Year[/]");
+            table.AddColumn("[bold springgreen4]ISBN[/]");
+            table.AddColumn("[bold springgreen4]Average Review[/]");
 
-            string ListInfoMenuChoice = Console.ReadLine()!;
-            switch (ListInfoMenuChoice)
+            // Lägg till varje bok i tabellen via PrintBookInfo
+            foreach (var book in sortedBooks)
             {
-                case "1":
-                    var sortedBooks = allBooks.ListAll().OrderBy(book => book.Title);
-                    Console.WriteLine("Books listed in alphabetical order:\n");
-                    foreach (var book in sortedBooks)
-                    {
-                        PrintBookInfo(book);
-                    }
-                    break;
-                case "2":
-                    var sortedAuthors = allAuthors.ListAll().OrderBy(author => author.Name);
-                    Console.WriteLine("Authors listed in alphabetical order:\n");
-
-                    foreach (var author in sortedAuthors)
-                    {
-                        PrintAuthorInfo(author, allBooks);
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please enter either 1 or 2.");
-                    break;
+                PrintBookInfo(table, book);
             }
-        }
-        private void PrintAuthorInfo(Author author, LibraryGenericFunctions<Book> allBooks)
-        {
-            Console.WriteLine("Author Information:");
-            Console.WriteLine($"Author: {author.Name}");
-            Console.WriteLine($"Author Id: {author.Id}");
-            Console.WriteLine($"Country: {author.Country}\n");
 
-            var booksByAuthor = allBooks.ListAll().Where(book => book.Author.Id == author.Id).ToList();
-            if (booksByAuthor.Count > 0)
+            // Anpassa tabellens utseende och skriv ut
+            table.Border = TableBorder.Rounded;
+            table.LeftAligned();
+            table.BorderColor(Color.SpringGreen3);
+            AnsiConsole.Write(table);
+        }
+        public void ListAllAuthors(LibraryGenericFunctions<Book> allBooks, LibraryGenericFunctions<Author> allAuthors)
+        {
+            var sortedAuthors = allAuthors.ListAll().OrderBy(author => author.Name);
+            if (sortedAuthors.Any())
             {
-                Console.WriteLine("Books:");
-                foreach (var book in booksByAuthor)
-        {
-            double averageReview = CalculateAverageReview(book);
+                // Skapa och konfigurera en tabell för att visa författare och deras böcker
+                var table = new Table();
+                table.AddColumn("[bold springgreen4]Author Name[/]");
+                table.AddColumn("[bold springgreen4]Country[/]");
+                table.AddColumn("[bold springgreen4]Author Id[/]");
+                table.AddColumn("[bold springgreen4]Books[/]");
 
-            Console.WriteLine($"Title: {book.Title}");
-            Console.WriteLine($"Id: {book.Id}");
-            Console.WriteLine($"Genre: {book.Genre}");
-            Console.WriteLine($"Published Year: {book.PublishedYear}");
-            Console.WriteLine($"ISBN: {book.ISBN}");
-            Console.WriteLine($"Average review: {averageReview:F1}");
-            Console.WriteLine("--------------------------------");
-        }
+                Console.WriteLine("Authors listed in alphabetical order:\n");
+
+                // Lägg till varje författare och deras böcker i tabellen
+                foreach (var author in sortedAuthors)
+                {
+                    PrintAuthorInfo(table, author, allBooks);
+                }
+
+                // Anpassa och skriv ut tabellen
+                table.Border = TableBorder.Rounded;
+                table.LeftAligned();
+                table.BorderColor(Color.SpringGreen3);
+                AnsiConsole.Write(table);
             }
             else
             {
-                Console.WriteLine("No books available for this author.\n");
+                Console.WriteLine("No authors found.");
             }
         }
-        private void PrintBookInfo(Book book)
+        private void PrintAuthorInfo(Table table, Author author, LibraryGenericFunctions<Book> allBooks)
+        {
+            var authorBooks = allBooks.ListAll().Where(book => book.Author.Id == author.Id);
+
+            // Skapa en sträng med alla boktitlar för denna författare, separerade med kommatecken
+            string booksList = string.Join(", ", authorBooks.Select(book => book.Title));
+
+            // Lägg till en rad i tabellen med författarens information och deras böcker
+            table.AddRow(
+                author.Name,
+                author.Country,
+                author.Id.ToString(),
+                string.IsNullOrEmpty(booksList) ? "No books" : booksList
+            );
+        }
+        private void PrintBookInfo(Table table, Book book)
         {
             double averageReview = CalculateAverageReview(book);
-            Console.WriteLine("Book Information:");
-            Console.WriteLine($"Title: {book.Title}");
-            Console.WriteLine($"Author: {book.Author.Name} / Country: {book.Author.Country}");
-            Console.WriteLine($"Id: {book.Id}");
-            Console.WriteLine($"Genre: {book.Genre}");
-            Console.WriteLine($"Published Year: {book.PublishedYear}");
-            Console.WriteLine($"ISBN: {book.ISBN}");
-            Console.WriteLine($"Average review: {averageReview:F1}");
-            Console.WriteLine("--------------------------------");
+            table.AddRow(
+                book.Title,
+                book.Author.Name,
+                book.Author.Country,
+                book.Id.ToString(),
+                book.Genre,
+                book.PublishedYear.ToString(),
+                book.ISBN.ToString(),
+                averageReview.ToString("F1")
+            );
         }
-        public void SearchAndFilterBooks(LibraryGenericFunctions<Book> allBooks, LibraryGenericFunctions<Author> allAuthors)
+        public void FilterBooksByGenre(LibraryGenericFunctions<Book> allBooks)
         {
-            Console.WriteLine("Search & filter books. Choose an option below: ");
-            Console.WriteLine("1 - Filter books by genre");
-            Console.WriteLine("2 - List all books with an average review above specific number");
-            Console.WriteLine("3 - Sort books by published year");
-            string searchFilterOptionChoosed = Console.ReadLine()!;
+            Console.WriteLine("Enter the genre to filter by: ");
+            string genreFilter = Console.ReadLine()!;
 
-            switch (searchFilterOptionChoosed)
+            var filteredBooksByGenre = allBooks.ListAll().Where(book => book.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (filteredBooksByGenre.Any())
             {
-                case "1":
-                    Console.WriteLine("By what genre: ");
-                    string listByGenre = Console.ReadLine()!;
+                // Skapa och konfigurera en tabell för att visa böcker
+                var table = new Table();
+                table.AddColumn("[bold springgreen4]Title[/]");
+                table.AddColumn("[bold springgreen4]Author[/]");
+                table.AddColumn("[bold springgreen4]Author Country[/]");
+                table.AddColumn("[bold springgreen4]Id[/]");
+                table.AddColumn("[bold springgreen4]Genre[/]");
+                table.AddColumn("[bold springgreen4]Published Year[/]");
+                table.AddColumn("[bold springgreen4]ISBN[/]");
+                table.AddColumn("[bold springgreen4]Average Review[/]");
 
-                    var filteredBooksByGenre = allBooks.ListAll().Where(book => book.Genre.Equals(listByGenre, StringComparison.OrdinalIgnoreCase)).ToList();
+                Console.WriteLine($"Books in {genreFilter} genre:");
 
-                    if (filteredBooksByGenre.Any())
-                    {
-                        Console.WriteLine($"Books in {listByGenre}:");
-                        foreach (var book in filteredBooksByGenre)
-                        {
-                            Console.WriteLine($"Title: {book.Title} | Author: {book.Author.Name} | Genre: {book.Genre}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("No books found in that genre.");
-                    }
-                    break;
-                case "2":
-                    Console.WriteLine("Above what average number do you want to list books (1-5):");
+                // Lägg till varje bok i tabellen via PrintBookInfo
+                foreach (var book in filteredBooksByGenre)
+                {
+                    PrintBookInfo(table, book);
+                }
 
-                    int listByAverageNumber = 0;
-                    bool validAverage = false;
+                // Anpassa och skriv ut tabellen
+                table.Border = TableBorder.Rounded;
+                table.LeftAligned();
+                table.BorderColor(Color.SpringGreen3);
+                AnsiConsole.Write(table);
+            }
+            else
+            {
+                Console.WriteLine($"No books found in the {genreFilter} genre.");
+            }
+        }
+        public void ListBooksByAverageReview(LibraryGenericFunctions<Book> allBooks)
+        {
+            Console.WriteLine("Enter the minimum average review (1-5): ");
+            int minReview = GetValidatedIntegerInput("Enter a valid number between 1 and 5 for average review filter:");
 
-                    while (!validAverage)
-                    {
-                        listByAverageNumber = GetValidatedIntegerInput("Please enter a number between 1 and 5:");
+            var booksAboveReview = allBooks.ListAll().Where(book => CalculateAverageReview(book) > minReview).ToList();
 
-                        if (listByAverageNumber >= 1 && listByAverageNumber <= 5)
-                        {
-                            validAverage = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Error, the average number must be between 1 and 5. Please try again.");
-                        }
-                    }
+            if (booksAboveReview.Any())
+            {
+                // Skapa och konfigurera en tabell för att visa böcker
+                var table = new Table();
+                table.AddColumn("[bold springgreen4]Title[/]");
+                table.AddColumn("[bold springgreen4]Author[/]");
+                table.AddColumn("[bold springgreen4]Author Country[/]");
+                table.AddColumn("[bold springgreen4]Id[/]");
+                table.AddColumn("[bold springgreen4]Genre[/]");
+                table.AddColumn("[bold springgreen4]Published Year[/]");
+                table.AddColumn("[bold springgreen4]ISBN[/]");
+                table.AddColumn("[bold springgreen4]Average Review[/]");
 
-                    var booksAboveAverage = allBooks.ListAll().Where(book => book.Reviews.Count > 0 && book.Reviews.Average() > listByAverageNumber).ToList();
+                Console.WriteLine($"Books with average review above {minReview}:");
 
-                    if (booksAboveAverage.Any())
-                    {
-                        Console.WriteLine($"Books with an average review above {listByAverageNumber}:");
-                        foreach (var book in booksAboveAverage)
-                        {
-                            Console.WriteLine($"Title: {book.Title} | Average Review: {book.Reviews.Average():F1}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No books found with an average review above {listByAverageNumber}");
-                    }
+                // Lägg till varje bok i tabellen via PrintBookInfo
+                foreach (var book in booksAboveReview)
+                {
+                    PrintBookInfo(table, book);
+                }
 
-                    break;
-                case "3":
-                    var sortBooksByPublishedYear = allBooks.ListAll().OrderBy(book => book.PublishedYear).ToList();
-                    Console.WriteLine("Books sorted by published year:");
-                    foreach (var book in sortBooksByPublishedYear)
-                    {
-                        Console.WriteLine($"Title: {book.Title} | Author: {book.Author.Name} | Published Year: {book.PublishedYear}");
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please enter either 1, 2 or 3.");
-                    break;
+                // Anpassa och skriv ut tabellen
+                table.Border = TableBorder.Rounded;
+                table.LeftAligned();
+                table.BorderColor(Color.SpringGreen3);
+                AnsiConsole.Write(table);
+            }
+            else
+            {
+                Console.WriteLine($"No books found with an average review above {minReview}.");
+            }
+        }
+        public void SortBooksByYear(LibraryGenericFunctions<Book> allBooks)
+        {
+            var sortedBooksByYear = allBooks.ListAll().OrderBy(book => book.PublishedYear).ToList();
+
+            if (sortedBooksByYear.Any())
+            {
+                // Skapa och konfigurera en tabell för att visa böcker
+                var table = new Table();
+                table.AddColumn("[bold springgreen4]Title[/]");
+                table.AddColumn("[bold springgreen4]Author[/]");
+                table.AddColumn("[bold springgreen4]Author Country[/]");
+                table.AddColumn("[bold springgreen4]Id[/]");
+                table.AddColumn("[bold springgreen4]Genre[/]");
+                table.AddColumn("[bold springgreen4]Published Year[/]");
+                table.AddColumn("[bold springgreen4]ISBN[/]");
+                table.AddColumn("[bold springgreen4]Average Review[/]");
+
+                Console.WriteLine("Books sorted by published year:");
+
+                // Lägg till varje bok i tabellen via PrintBookInfo
+                foreach (var book in sortedBooksByYear)
+                {
+                    PrintBookInfo(table, book);
+                }
+
+                // Anpassa och skriv ut tabellen
+                table.Border = TableBorder.Rounded;
+                table.LeftAligned();
+                table.BorderColor(Color.SpringGreen3);
+                AnsiConsole.Write(table);
+            }
+            else
+            {
+                Console.WriteLine("No books found.");
             }
         }
         public double CalculateAverageReview(Book book)
